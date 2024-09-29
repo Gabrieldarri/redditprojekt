@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "api", "api\api.csproj", "{BEADC5B6-809A-4D84-9DDA-556CE0D2C519}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedditPages", "RedditPages\RedditPages.csproj", "{A1F553F0-1E3B-4EBA-8819-0844724C8758}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BEADC5B6-809A-4D84-9DDA-556CE0D2C519}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEADC5B6-809A-4D84-9DDA-556CE0D2C519}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEADC5B6-809A-4D84-9DDA-556CE0D2C519}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEADC5B6-809A-4D84-9DDA-556CE0D2C519}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1F553F0-1E3B-4EBA-8819-0844724C8758}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1F553F0-1E3B-4EBA-8819-0844724C8758}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1F553F0-1E3B-4EBA-8819-0844724C8758}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1F553F0-1E3B-4EBA-8819-0844724C8758}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

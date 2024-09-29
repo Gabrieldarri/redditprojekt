@@ -1,0 +1,159 @@
+﻿@page "/posts"
+@using Model
+@inject HttpClient Http
+
+<h3>Posts</h3>
+
+<!-- Form to create a new post -->
+<EditForm Model="@newPost" OnValidSubmit="CreatePost" FormName="newPostForm">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label>Title:</label>
+        <InputText @bind-Value="@newPost.Title" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Content:</label>
+        <InputTextArea @bind-Value="@newPost.Content" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Author:</label>
+        <InputText @bind-Value="@newPost.Author" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Create Post</button>
+</EditForm>
+
+@if (posts != null && posts.Any())
+{
+    <h4>All Posts</h4>
+    @foreach (var post in posts)
+    {
+        <div class="post">
+            <h5>@post.Title</h5>
+            <p>@post.Content</p>
+            <p class="post-meta">By: @post.Author | Votes: @post.VoteCount</p>
+            <div class="post-actions">
+                <button @onclick="() => UpvotePost(post.Id)" class="btn btn-success">Upvote</button>
+                <button @onclick="() => DownvotePost(post.Id)" class="btn btn-danger">Downvote</button>
+            </div>
+
+            <h6>Comments</h6>
+            @if (post.Comments != null && post.Comments.Any())
+            {
+                foreach (var comment in post.Comments)
+                {
+                    <div class="comment">
+                        <p>@comment.Text - By: @comment.Author</p>
+                    </div>
+                }
+            }
+
+            <!-- Form to create a comment -->
+            <EditForm Model="@newComment" OnValidSubmit="() => CreateComment(post.Id)" FormName="@($"newCommentForm_{post.Id}")">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-group">
+                    <label>Comment:</label>
+                    <InputText @bind-Value="@newComment.Text" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Author:</label>
+                    <InputText @bind-Value="@newComment.Author" class="form-control" />
+                </div>
+                <button type="submit" class="btn btn-primary">Add Comment</button>
+            </EditForm>
+        </div>
+    }
+}
+
+@code {
+    private List<Post> posts = new List<Post>();
+    private Post newPost = new Post();
+    private Comment newComment = new Comment();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPosts();
+    }
+
+    private async Task LoadPosts()
+    {
+        posts = await Http.GetFromJsonAsync<List<Post>>("http://localhost:5224/api/post");
+    }
+
+    private async Task CreatePost()
+    {
+        Console.WriteLine($"Creating Post: Title={newPost.Title}, Content={newPost.Content}, Author={newPost.Author}");
+
+        // Validate the inputs
+        if (string.IsNullOrWhiteSpace(newPost.Title) ||
+            string.IsNullOrWhiteSpace(newPost.Content) ||
+            string.IsNullOrWhiteSpace(newPost.Author))
+        {
+            Console.WriteLine("Validation failed: all fields are required.");
+            return; // Exit early if validation fails
+        }
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("http://localhost:5224/api/post", newPost);
+            var responseBody = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Response: {response.StatusCode} - {responseBody}");
+
+            response.EnsureSuccessStatusCode(); // Throws if not a success code
+            newPost = new Post(); // Reset the form
+            await LoadPosts(); // Reload posts
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error creating post: {ex.Message}");
+        }
+    }
+
+
+    private async Task CreateComment(int postId)
+    {
+        newComment.PostId = postId; 
+        try
+        {
+            var response = await Http.PostAsJsonAsync($"http://localhost:5224/api/post/{postId}/comments", newComment);
+            response.EnsureSuccessStatusCode(); // Throws if not a success code
+            newComment = new Comment(); // Reset the comment form
+            await LoadPosts(); 
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error creating comment: {ex.Message}");
+        }
+    }
+
+    private async Task UpvotePost(int postId)
+    {
+        try
+        {
+            var response = await Http.PutAsync($"http://localhost:5224/api/post/{postId}/upvote", null);
+            response.EnsureSuccessStatusCode(); // Throws if not a success code
+            await LoadPosts(); 
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error upvoting post: {ex.Message}");
+        }
+    }
+
+    private async Task DownvotePost(int postId)
+    {
+        try
+        {
+            var response = await Http.PutAsync($"http://localhost:5224/api/post/{postId}/downvote", null);
+            response.EnsureSuccessStatusCode(); // Throws if not a success code
+            await LoadPosts(); // Reload posts
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error downvoting post: {ex.Message}");
+        }
+    }
+}
