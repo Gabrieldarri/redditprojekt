@@ -7,7 +7,7 @@ namespace redditpages.Data;
 public class ApiService
 {
     private readonly HttpClient http;
-    private readonly string baseAPI = "https://localhost:7225/api/";
+    private readonly string baseAPI = "http://localhost:5177/api/";
 
     public ApiService(HttpClient http)
     {
