@@ -46,13 +46,13 @@ else
         @foreach (var post in posts) // Itererer gennem og viser alle posts
         {
             <tr>
-                <td><a href="/post/@post.Id">@post.Title</a></td> // Link til post
+                <td><a href="/post/@post.Id">@post.Title</a></td> 
                 <td>@post.Content</td>
                 <td>@post.User</td>
-                <td>@FormatTimeSince(post.CreatedAt)</td> // Viser tidsstempel
+                <td>@FormatTimeSince(post.CreatedAt)</td> 
                 <td>@(post.Upvotes - post.Downvotes)</td>
-                <td><button @onclick="() => Upvote(post.Id)">Upvote</button></td> // Knappen til opstemning
-                <td><button @onclick="() => Downvote(post.Id)">Downvote</button></td> // Knappen til nedstemning
+                <td><button @onclick="() => Upvote(post.Id)">Upvote</button></td> 
+                <td><button @onclick="() => Downvote(post.Id)">Downvote</button></td> 
             </tr>
         }
     </table>
