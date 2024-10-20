@@ -1,0 +1,53 @@
+@using redditpages.Data;
+@inject ApiService apiService
+
+<div>
+    <br />
+    <h3>Write a comment</h3>
+    <input placeholder="Your Name" type="text" @bind-value="user" />
+    <input placeholder="Content" type="input" @bind-value="content" />
+    <button id="createPostButton" type="button" @onclick="CreateNewComment">Post comment</button>
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <p style="color:red;">@errorMessage</p> <!-- Vis fejlmeddelelse -->
+    }
+</div>
+
+@code {
+    // PostId is passed in from the parent component. See how in PostItem.razor.
+    [Parameter]
+    public int PostId { get; set; }
+
+    [Parameter]
+    public EventCallback RefreshComments { get; set; } // Ny parameter til at opdatere kommentarerne
+
+    private string? content;
+    private string? user; // Nyt felt til brugernavn
+    private string? errorMessage; // Til at gemme fejlmeddelelser
+
+    private async Task CreateNewComment() // Ændret til Task
+    {
+        errorMessage = null; // Ryd fejlmeddelelse før oprettelse
+
+        if (string.IsNullOrWhiteSpace(content) || string.IsNullOrWhiteSpace(user))
+        {
+            errorMessage = "Please enter both your name and comment."; // Feedback til brugeren
+            return;
+        }
+
+        var newComment = await apiService.CreateComment(content, user, PostId); // Send både content og userName
+
+        if (newComment == null)
+        {
+            errorMessage = "Failed to create comment. Please try again."; // Håndter fejl
+            return;
+        }
+
+        // Ryd inputfelterne efter oprettelse
+        content = "";
+        user = "";
+
+        // Opdater kommentarvisningen i den overordnede komponent
+        await RefreshComments.InvokeAsync(); // Kald RefreshComments for at opdatere UI'en
+    }
+}

@@ -1,0 +1,125 @@
+﻿@page "/post/{id}"
+
+@using redditpages.Data;
+@using shared.Model;
+@inject ApiService apiService
+@inject NavigationManager NavigationManager // Inject NavigationManager
+
+<PageTitle>Reddot</PageTitle>
+
+<head>
+    <link href="css/app.css" rel="stylesheet" />
+</head>
+
+<button @onclick="NavigateToAllPosts">Tilbage til alle posts</button> <!-- Knappen til at navigere tilbage -->
+@if (Post == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="contents">
+        <h4>@Post.Title</h4>
+        <p><strong>User: @Post.User, Votes: @(Post.Upvotes - Post.Downvotes)</strong></p>
+        <p>@Post.Content</p>
+        <p><em>Created At: @FormatTimeSince(Post.CreatedAt)</em></p> <!-- Vis tid siden oprettelse -->
+        <button @onclick="() => UpvotePost(Post.Id)">Upvote Post</button>
+        <button @onclick="() => DownvotePost(Post.Id)">Downvote Post</button>
+    </div>
+
+    <div class="contents">
+        <h4>Comments</h4>
+        <table>
+            <tr>
+                <th>User</th>
+                <th>Comment</th>
+                <th>Votes</th>
+                <th>Created At</th> <!-- Tilføjet kolonne for dato og tid -->
+                <th colspan="2">Actions</th>
+            </tr>
+            @foreach (var comment in Post.Comments.OrderByDescending(c => c.CreatedAt))
+            {
+                <tr>
+                    <td>@comment.User</td>
+                    <td>@comment.Content</td>
+                    <td>@(comment.Upvotes - comment.Downvotes)</td>
+                    <td>@FormatTimeSince(comment.CreatedAt)</td> 
+                    <td><button @onclick="() => UpvoteComment(comment.Id)">Upvote</button></td>
+                    <td><button @onclick="() => DownvoteComment(comment.Id)">Downvote</button></td>
+                </tr>
+            }
+        </table>
+    </div>
+
+    <CreateComment PostId="@PostId" RefreshComments="LoadComments"></CreateComment> <!-- Tilføjet RefreshComments parameter -->
+}
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    public int PostId { get { return int.Parse(Id); } }
+    public Post Post { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadComments(); // Hent kommentarer ved initialisering
+    }
+
+    private async Task LoadComments()
+    {
+        Post = await apiService.GetPost(PostId); // Opdater posten og dens kommentarer
+        StateHasChanged(); // Opdater UI'en
+    }
+
+    private async Task UpvotePost(int postId)
+    {
+        await apiService.UpvotePost(postId); // Upvote indlæg
+        await RefreshPost(); // Opdater posten
+    }
+
+    private async Task DownvotePost(int postId)
+    {
+        await apiService.DownvotePost(postId); // Downvote indlæg
+        await RefreshPost(); // Opdater posten
+    }
+
+    private async Task UpvoteComment(int commentId)
+    {
+        await apiService.UpvoteComment(commentId); // Upvote kommentar
+        await RefreshPost(); // Opdater posten
+    }
+
+    private async Task DownvoteComment(int commentId)
+    {
+        await apiService.DownvoteComment(commentId); // Downvote kommentar
+        await RefreshPost(); // Opdater posten
+    }
+
+    private async Task RefreshPost()
+    {
+        await LoadComments(); // Opdater posten og kommentarerne
+    }
+
+    private void NavigateToAllPosts()
+    {
+        NavigationManager.NavigateTo("/"); // Naviger tilbage til hovedsiden
+    }
+
+    private string FormatTimeSince(DateTime createdAt)
+    {
+        var timeSpan = DateTime.Now - createdAt;
+
+        if (timeSpan.TotalDays >= 1)
+        {
+            return $"{(int)timeSpan.TotalDays} days ago";
+        }
+        else if (timeSpan.TotalHours >= 1)
+        {
+            return $"{(int)timeSpan.TotalHours} hours ago";
+        }
+        else
+        {
+            return $"{(int)timeSpan.TotalMinutes} minutes ago"; // Hvis det er mindre end en time
+        }
+    }
+}

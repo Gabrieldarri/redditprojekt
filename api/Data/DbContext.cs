@@ -1,7 +1,7 @@
 ﻿namespace Data
 {
     using Microsoft.EntityFrameworkCore;
-    using Model;
+    using shared.Model;
 
     public class AppDbContext : DbContext
     {

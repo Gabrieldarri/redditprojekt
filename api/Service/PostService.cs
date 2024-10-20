@@ -1,4 +1,4 @@
-﻿using Model;
+﻿using shared.Model;
 using Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,21 +13,22 @@ namespace Service
             _context = context;
         }
 
-        public async Task<IEnumerable<Post>> GetPostsAsync()
+        public async Task<List<Post>> GetPostsAsync()
         {
             return await _context.Posts.Include(p => p.Comments).ToListAsync();
         }
 
         public async Task<Post> GetPostByIdAsync(int id)
         {
-            return await _context.Posts.Include(p => p.Comments).FirstOrDefaultAsync(p => p.Id == id);
+            return await _context.Posts.Include(p => p.Comments)
+                                       .FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<Post> CreatePostAsync(Post newPost)
+        public async Task CreatePostAsync(Post post)
         {
-            _context.Posts.Add(newPost);
+            _context.Posts.Add(post);
             await _context.SaveChangesAsync();
-            return newPost;
+          
         }
 
         public async Task UpvotePostAsync(int id)
@@ -35,7 +36,7 @@ namespace Service
             var post = await _context.Posts.FindAsync(id);
             if (post != null)
             {
-                post.VoteCount++;
+                post.Upvotes++;
                 await _context.SaveChangesAsync();
             }
         }
@@ -45,10 +46,11 @@ namespace Service
             var post = await _context.Posts.FindAsync(id);
             if (post != null)
             {
-                post.VoteCount--;
+                post.Downvotes++;
                 await _context.SaveChangesAsync();
             }
         }
     }
+
 
 }

@@ -19,9 +19,10 @@ namespace api.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Title = table.Column<string>(type: "TEXT", nullable: false),
                     Content = table.Column<string>(type: "TEXT", nullable: false),
-                    Author = table.Column<string>(type: "TEXT", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    VoteCount = table.Column<int>(type: "INTEGER", nullable: false)
+                    Upvotes = table.Column<int>(type: "INTEGER", nullable: false),
+                    Downvotes = table.Column<int>(type: "INTEGER", nullable: false),
+                    User = table.Column<string>(type: "TEXT", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -34,11 +35,12 @@ namespace api.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Text = table.Column<string>(type: "TEXT", nullable: false),
-                    Author = table.Column<string>(type: "TEXT", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    VoteCount = table.Column<int>(type: "INTEGER", nullable: false),
-                    PostId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Content = table.Column<string>(type: "TEXT", nullable: false),
+                    Upvotes = table.Column<int>(type: "INTEGER", nullable: false),
+                    Downvotes = table.Column<int>(type: "INTEGER", nullable: false),
+                    PostId = table.Column<int>(type: "INTEGER", nullable: false),
+                    User = table.Column<string>(type: "TEXT", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {

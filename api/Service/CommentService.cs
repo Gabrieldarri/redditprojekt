@@ -1,4 +1,4 @@
-﻿using Model;
+﻿using shared.Model;
 using Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,43 +13,35 @@ namespace Service
             _context = context;
         }
 
-        public async Task<IEnumerable<Comment>> GetCommentsByPostIdAsync(int postId)
+        public async Task<Comment> CreateCommentAsync(Comment comment)
         {
-            return await _context.Comments
-                .Where(c => c.PostId == postId)
-                .ToListAsync();
-        }
-
-        public async Task<Comment> CreateCommentAsync(Comment newComment)
-        {
-            _context.Comments.Add(newComment);
+            // Tilføj logik til at gemme kommentaren i databasen
+            await _context.Comments.AddAsync(comment);
             await _context.SaveChangesAsync();
-            return newComment;
+
+            return comment; // Returner den oprettede kommentar
         }
 
-        public async Task UpvoteCommentAsync(int commentId)
+
+        public async Task UpvoteCommentAsync(int id)
         {
-            var comment = await _context.Comments.FindAsync(commentId);
+            var comment = await _context.Comments.FindAsync(id);
             if (comment != null)
             {
-                comment.VoteCount++;
+                comment.Upvotes++;
                 await _context.SaveChangesAsync();
             }
         }
 
-        public async Task DownvoteCommentAsync(int commentId)
+        public async Task DownvoteCommentAsync(int id)
         {
-            var comment = await _context.Comments.FindAsync(commentId);
+            var comment = await _context.Comments.FindAsync(id);
             if (comment != null)
             {
-                comment.VoteCount--;
+                comment.Downvotes++;
                 await _context.SaveChangesAsync();
             }
         }
-        public async Task<Comment> GetCommentByIdAsync(int id)
-        {
-            return await _context.Comments.FindAsync(id);
-        }
-
     }
+
 }

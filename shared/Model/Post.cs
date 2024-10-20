@@ -1,0 +1,40 @@
+namespace shared.Model
+{
+    public class Post
+    {
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public string Content { get; set; }
+        public int Upvotes { get; set; }
+        public int Downvotes { get; set; }
+        public string User { get; set; } // Ændret fra User til string for brugernavn
+        public DateTime CreatedAt { get; set; } 
+        public List<Comment> Comments { get; set; } = new List<Comment>();
+
+        public Post(string user = "", string title = "", string content = "", int upvotes = 0, int downvotes = 0) 
+        {
+            Title = title;
+            Content = content;
+            Upvotes = upvotes;
+            Downvotes = downvotes;
+            User = user; // Tildel user string
+            CreatedAt = DateTime.Now;
+        }
+
+        public Post()
+        {
+            Id = 0;
+            Title = "";
+            Content = "";
+            Upvotes = 0;
+            Downvotes = 0;
+            User = ""; // Initialiser user string
+            CreatedAt = DateTime.Now;
+        }
+
+        public override string ToString()
+        {
+            return $"Id: {Id}, Title: {Title}, Content: {Content}, Upvotes: {Upvotes}, Downvotes: {Downvotes}, User: {User}";
+        }
+    }
+}

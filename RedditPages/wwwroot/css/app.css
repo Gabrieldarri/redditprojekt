@@ -1,24 +1,41 @@
+﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9; /* Lys grå baggrund */
 }
 
-h1:focus {
-    outline: none;
+h1, h3 {
+    color: #452d3d; /* Farve til overskrifter */
+    margin-top: 0;
 }
+
+    h1:focus {
+        outline: none;
+    }
 
 a, .btn-link {
     color: #0071c1;
+    text-decoration: none; /* Ingen understregning */
 }
+
+    a:hover {
+        text-decoration: underline; /* Understregning ved hover */
+    }
 
 .btn-primary {
     color: #fff;
     background-color: #1b6ec2;
     border-color: #1861ac;
+    border-radius: 4px; /* Runde hjørner på knapper */
+    padding: 10px 15px; /* Polstring for knapper */
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
+    .btn-primary:hover {
+        background-color: #1861ac; /* Mørkere farve ved hover */
+    }
 
 .content {
     padding-top: 1.1rem;
@@ -65,39 +82,63 @@ a, .btn-link {
         content: "An error has occurred."
     }
 
-.loading-progress {
-    position: relative;
-    display: block;
-    width: 8rem;
-    height: 8rem;
-    margin: 20vh auto 1rem auto;
+table {
+    border-collapse: collapse;
+    width: 100%; /* Gør tabellen fuld bredde */
+    margin-top: 20px; /* Margin ovenfor tabellen */
+    background-color: #fff; /* Hvid baggrund for tabellen */
 }
 
-    .loading-progress circle {
-        fill: none;
-        stroke: #e0e0e0;
-        stroke-width: 0.6rem;
-        transform-origin: 50% 50%;
-        transform: rotate(-90deg);
+td, th {
+    border: 1px solid #a5a19a;
+    text-align: left;
+    padding: 12px; /* Mere polstring for bedre læsbarhed */
+}
+
+th {
+    background-color: #452d3d; /* Baggrundsfarve til overskrifter */
+    color: white; /* Hvid skrift til overskrifter */
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2; /* Skiftende baggrundsfarve for hver anden række */
+}
+
+tr:hover {
+    background-color: #ddd; /* Baggrundsfarve ved hover */
+}
+
+/* Styles for inputs and buttons */
+input[type="text"], textarea {
+    width: 100%; /* Fuld bredde */
+    padding: 10px; /* Polstring */
+    margin: 10px 0; /* Margin omkring felter */
+    border: 1px solid #ccc; /* Lys grå kant */
+    border-radius: 4px; /* Runde hjørner */
+    box-sizing: border-box; /* Inkluder polstring i bredde/ højde */
+}
+
+textarea {
+    width: 100%;
+    height: 150px; /* Juster højden som nødvendigt */
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+
+
+button {
+    background-color: #1b6ec2; /* Knap baggrundsfarve */
+    color: white; /* Knap tekstfarve */
+    padding: 10px 20px; /* Knap polstring */
+    border: none; /* Ingen kant */
+    border-radius: 4px; /* Runde hjørner */
+    cursor: pointer; /* Cursor ændring ved hover */
+}
+
+    button:hover {
+        background-color: #1861ac; /* Mørkere farve ved hover */
     }
-
-        .loading-progress circle:last-child {
-            stroke: #1b6ec2;
-            stroke-dasharray: calc(3.141 * var(--blazor-load-percentage, 0%) * 0.8), 500%;
-            transition: stroke-dasharray 0.05s ease-in-out;
-        }
-
-.loading-progress-text {
-    position: absolute;
-    text-align: center;
-    font-weight: bold;
-    inset: calc(20vh + 3.25rem) 0 auto 0.2rem;
-}
-
-    .loading-progress-text:after {
-        content: var(--blazor-load-percentage-text, "Loading");
-    }
-
-code {
-    color: #c02d76;
-}

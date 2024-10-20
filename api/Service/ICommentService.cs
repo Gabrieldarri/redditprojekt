@@ -1,15 +1,13 @@
-﻿using Model;
+﻿using shared.Model;
 
 namespace Service
 {
     public interface ICommentService
     {
-        Task<IEnumerable<Comment>> GetCommentsByPostIdAsync(int postId);
-        Task<Comment> CreateCommentAsync(Comment newComment);
-        Task UpvoteCommentAsync(int commentId);
-        Task DownvoteCommentAsync(int commentId);
-        Task<Comment> GetCommentByIdAsync(int id);
-
+        Task<Comment> CreateCommentAsync(Comment comment);    // Create a new comment
+        Task UpvoteCommentAsync(int id);             // Upvote a comment
+        Task DownvoteCommentAsync(int id);           // Downvote a comment
     }
+
 }
 

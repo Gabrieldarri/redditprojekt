@@ -1,44 +1,53 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Model;
+using shared.Model;
 using Service;
 
 namespace Controller
 {
-    [ApiController]
     [Route("api/[controller]")]
+    [ApiController]
     public class PostController : ControllerBase
     {
         private readonly IPostService _postService;
-        private readonly ICommentService _commentService;
 
-        public PostController(IPostService postService, ICommentService commentService)
+        public PostController(IPostService postService)
         {
             _postService = postService;
-            _commentService = commentService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPosts()
+        public async Task<ActionResult<List<Post>>> GetPosts()
         {
             var posts = await _postService.GetPostsAsync();
             return Ok(posts);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetPostById(int id)
+        public async Task<ActionResult<Post>> GetPost(int id)
         {
             var post = await _postService.GetPostByIdAsync(id);
             if (post == null)
+            {
                 return NotFound();
+            }
             return Ok(post);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePost(Post post)
+        public async Task<IActionResult> CreatePost([FromBody] Post post)
         {
-            var newPost = await _postService.CreatePostAsync(post);
-            return CreatedAtAction(nameof(GetPostById), new { id = newPost.Id }, newPost);
+            if (post == null || string.IsNullOrWhiteSpace(post.User))
+            {
+                return BadRequest("Post cannot be null and User is required.");
+            }
+
+            await _postService.CreatePostAsync(post);
+
+            // Returner den oprettede post
+            return CreatedAtAction(nameof(GetPost), new { id = post.Id }, post);
         }
+
+
 
         [HttpPut("{id}/upvote")]
         public async Task<IActionResult> UpvotePost(int id)
@@ -53,33 +62,6 @@ namespace Controller
             await _postService.DownvotePostAsync(id);
             return NoContent();
         }
-
-        [HttpPost("{postId}/comments")]
-        public async Task<IActionResult> CreateComment(int postId, [FromBody] Comment comment)
-        {
-            // Set the PostId from the route
-            comment.PostId = postId;
-
-            // Create the comment
-            var newComment = await _commentService.CreateCommentAsync(comment);
-            return CreatedAtAction(nameof(GetCommentById), new { id = newComment.Id }, newComment);
-        }
-
-
-        [HttpGet("{postId}/comments")]
-        public async Task<IActionResult> GetCommentsByPostId(int postId)
-        {
-            var comments = await _commentService.GetCommentsByPostIdAsync(postId);
-            return Ok(comments);
-        }
-
-        [HttpGet("comments/{id}")]
-        public async Task<IActionResult> GetCommentById(int id)
-        {
-            var comment = await _commentService.GetCommentByIdAsync(id);
-            if (comment == null)
-                return NotFound();
-            return Ok(comment);
-        }
     }
+
 }
