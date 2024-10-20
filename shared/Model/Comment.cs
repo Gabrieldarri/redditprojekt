@@ -7,16 +7,16 @@ namespace shared.Model
         public int Upvotes { get; set; }
         public int Downvotes { get; set; }
 
-        public int PostId { get; set; }  // Relaterer kommentaren til en post
-        public string User { get; set; }  // Ændret fra User til string for brugernavn
+        public int PostId { get; set; }  
+        public string User { get; set; }  
         public DateTime CreatedAt { get; set; }
 
-        public Comment(string content = "", int upvotes = 0, int downvotes = 0, string user = "") // Ændret parameter fra User til string
+        public Comment(string content = "", int upvotes = 0, int downvotes = 0, string user = "") 
         {
             Content = content;
             Upvotes = upvotes;
             Downvotes = downvotes;
-            User = user; // Tildel user string
+            User = user; 
             CreatedAt = DateTime.Now;
         }
 
@@ -26,7 +26,7 @@ namespace shared.Model
             Content = "";
             Upvotes = 0;
             Downvotes = 0;
-            User = ""; // Initialiser user string
+            User = ""; 
             CreatedAt = DateTime.Now;
         }
     }

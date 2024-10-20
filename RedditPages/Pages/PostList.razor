@@ -11,18 +11,24 @@
 @if (posts == null)
 {
     <p><em>Loading...</em></p>
+    // Viser loading-indikator, mens indhold indlæses
 }
 else
 {
     <h3>Add a New Post</h3>
     <input placeholder="Title" type="text" @bind="newPostTitle" />
+    // Input til post-titel
     <textarea placeholder="Content" @bind="newPostContent"></textarea>
+    // Input til post-indhold
     <input placeholder="Username" type="text" @bind="newPostUser" />
+    // Input til brugernavn
     <button @onclick="CreatePost">Create Post</button>
+                // Knappen til at oprette ny post
 
     <div>
         <label for="sortOptions">Sort by:</label>
         <select id="sortOptions" @onchange="OnSortOptionChanged">
+            // Dropdown til sortering
             <option value="newest">Newest</option>
             <option value="mostVotes">Most Votes</option>
             <option value="leastVotes">Least Votes</option>
@@ -37,48 +43,52 @@ else
             <th>Posted</th>
             <th colspan="3">Votes</th>
         </tr>
-        @foreach (var post in posts)
+        @foreach (var post in posts) // Itererer gennem og viser alle posts
         {
             <tr>
-                <td><a href="/post/@post.Id">@post.Title</a></td>
+                <td><a href="/post/@post.Id">@post.Title</a></td> // Link til post
                 <td>@post.Content</td>
                 <td>@post.User</td>
-                <td>@FormatTimeSince(post.CreatedAt)</td>
+                <td>@FormatTimeSince(post.CreatedAt)</td> // Viser tidsstempel
                 <td>@(post.Upvotes - post.Downvotes)</td>
-                <td><button @onclick="() => Upvote(post.Id)">Upvote</button></td>
-                <td><button @onclick="() => Downvote(post.Id)">Downvote</button></td>
+                <td><button @onclick="() => Upvote(post.Id)">Upvote</button></td> // Knappen til opstemning
+                <td><button @onclick="() => Downvote(post.Id)">Downvote</button></td> // Knappen til nedstemning
             </tr>
         }
     </table>
 }
 
 @code {
-    private Post[]? posts;
-    private string? newPostTitle;
-    private string? newPostContent;
-    private string? newPostUser;
-    private string selectedSortOption = "newest"; // Standard sorteringsmulighed
+    private Post[]? posts; // Liste af posts
+    private string? newPostTitle; // Titel på ny post
+    private string? newPostContent; // Indhold af ny post
+    private string? newPostUser; // Brugernavn til ny post
+    private string selectedSortOption = "newest"; // Standard sorteringsoption
 
+    // Indlæser posts ved initialisering
     protected override async Task OnInitializedAsync()
     {
         await LoadPosts();
     }
 
+    // Indlæser alle posts fra API
     private async Task LoadPosts()
     {
         posts = (await apiService.GetPosts()).ToArray();
-        SortPosts(); // Sorter posts, når de indlæses
+        SortPosts(); // Sorterer posts efter valgt kriterium
     }
 
+    // Håndterer ændring af sorteringsmulighed
     private void OnSortOptionChanged(ChangeEventArgs e)
     {
         selectedSortOption = e.Value.ToString();
         SortPosts();
     }
 
+    // Sorterer posts baseret på valgt sorteringsmulighed
     private void SortPosts()
     {
-        if (posts == null) return; // Tjek, at posts ikke er null
+        if (posts == null) return;
 
         switch (selectedSortOption)
         {
@@ -95,35 +105,39 @@ else
         }
     }
 
+    // Opretter en ny post
     private async Task CreatePost()
     {
         if (string.IsNullOrWhiteSpace(newPostTitle) ||
             string.IsNullOrWhiteSpace(newPostContent) ||
             string.IsNullOrWhiteSpace(newPostUser))
         {
-            return;
+            return; // Validering af input
         }
 
         var newPost = await apiService.CreatePost(newPostTitle, newPostContent, newPostUser);
         if (newPost != null)
         {
-            await LoadPosts(); // Opdater listen med indlæg
-            ClearPostInputs();
+            await LoadPosts(); // Genindlæser posts efter oprettelse
+            ClearPostInputs(); // Tømmer inputfelter
         }
     }
 
+    // Håndterer opstemning af post
     private async Task Upvote(int id)
     {
         await apiService.UpvotePost(id);
-        await LoadPosts(); // Opdater listen
+        await LoadPosts(); // Opdaterer listen efter opstemning
     }
 
+    // Håndterer nedstemning af post
     private async Task Downvote(int id)
     {
         await apiService.DownvotePost(id);
-        await LoadPosts(); // Opdater listen
+        await LoadPosts(); // Opdaterer listen efter nedstemning
     }
 
+    // Tømmer inputfelterne til ny post
     private void ClearPostInputs()
     {
         newPostTitle = "";
@@ -131,6 +145,7 @@ else
         newPostUser = "";
     }
 
+    // Formaterer tid siden oprettelse af post
     private string FormatTimeSince(DateTime createdAt)
     {
         var timeSpan = DateTime.Now - createdAt;

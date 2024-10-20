@@ -10,34 +10,31 @@ namespace Controller
     {
         private readonly ICommentService _commentService;
 
+        // Dependency injection af comment service
         public CommentController(ICommentService commentService)
         {
             _commentService = commentService;
         }
 
-        // Endpoint to create a new comment, with postId as a route parameter
+        // Endpoint for at oprette en ny kommentar
         [HttpPost("{postId}")]
         public async Task<IActionResult> CreateComment(int postId, [FromBody] Comment comment)
         {
-            // Tjek om kommentaren er null
+            // Tjekker om kommentaren er gyldig
             if (comment == null || string.IsNullOrWhiteSpace(comment.Content) || string.IsNullOrWhiteSpace(comment.User))
             {
                 return BadRequest("Invalid comment data.");
             }
 
-            // Sæt PostId i kommentarobjektet
-            comment.PostId = postId; // Sørg for, at din Comment-model har en PostId-egenskab
+            // Tilknyt postId til kommentaren
+            comment.PostId = postId;
 
-            // Opret kommentaren via din service
+            // Opretter kommentar via service og returnerer resultatet
             var createdComment = await _commentService.CreateCommentAsync(comment);
-
-            // Returner den oprettede kommentar med statuskoden 201 Created
             return CreatedAtAction(nameof(CreateComment), new { id = createdComment.Id }, createdComment);
         }
 
-
-
-        // Endpoint to upvote a comment
+        // Endpoint for at upvote en kommentar
         [HttpPut("{id}/upvote")]
         public async Task<IActionResult> UpvoteComment(int id)
         {
@@ -45,7 +42,7 @@ namespace Controller
             return NoContent();
         }
 
-        // Endpoint to downvote a comment
+        // Endpoint for at downvote en kommentar
         [HttpPut("{id}/downvote")]
         public async Task<IActionResult> DownvoteComment(int id)
         {

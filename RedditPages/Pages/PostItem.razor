@@ -3,7 +3,7 @@
 @using redditpages.Data;
 @using shared.Model;
 @inject ApiService apiService
-@inject NavigationManager NavigationManager // Inject NavigationManager
+@inject NavigationManager NavigationManager
 
 <PageTitle>Reddot</PageTitle>
 
@@ -11,10 +11,11 @@
     <link href="css/app.css" rel="stylesheet" />
 </head>
 
-<button @onclick="NavigateToAllPosts">Tilbage til alle posts</button> <!-- Knappen til at navigere tilbage -->
+<button @onclick="NavigateToAllPosts">Tilbage til alle posts</button>
 @if (Post == null)
 {
     <p><em>Loading...</em></p>
+    // Viser loading-indikator, mens data indlæses
 }
 else
 {
@@ -22,7 +23,7 @@ else
         <h4>@Post.Title</h4>
         <p><strong>User: @Post.User, Votes: @(Post.Upvotes - Post.Downvotes)</strong></p>
         <p>@Post.Content</p>
-        <p><em>Created At: @FormatTimeSince(Post.CreatedAt)</em></p> <!-- Vis tid siden oprettelse -->
+        <p><em>Created At: @FormatTimeSince(Post.CreatedAt)</em></p>
         <button @onclick="() => UpvotePost(Post.Id)">Upvote Post</button>
         <button @onclick="() => DownvotePost(Post.Id)">Downvote Post</button>
     </div>
@@ -34,7 +35,7 @@ else
                 <th>User</th>
                 <th>Comment</th>
                 <th>Votes</th>
-                <th>Created At</th> <!-- Tilføjet kolonne for dato og tid -->
+                <th>Created At</th>
                 <th colspan="2">Actions</th>
             </tr>
             @foreach (var comment in Post.Comments.OrderByDescending(c => c.CreatedAt))
@@ -43,7 +44,7 @@ else
                     <td>@comment.User</td>
                     <td>@comment.Content</td>
                     <td>@(comment.Upvotes - comment.Downvotes)</td>
-                    <td>@FormatTimeSince(comment.CreatedAt)</td> 
+                    <td>@FormatTimeSince(comment.CreatedAt)</td>
                     <td><button @onclick="() => UpvoteComment(comment.Id)">Upvote</button></td>
                     <td><button @onclick="() => DownvoteComment(comment.Id)">Downvote</button></td>
                 </tr>
@@ -51,7 +52,7 @@ else
         </table>
     </div>
 
-    <CreateComment PostId="@PostId" RefreshComments="LoadComments"></CreateComment> <!-- Tilføjet RefreshComments parameter -->
+    <CreateComment PostId="@PostId" RefreshComments="LoadComments"></CreateComment>
 }
 
 @code {
@@ -60,51 +61,60 @@ else
     public int PostId { get { return int.Parse(Id); } }
     public Post Post { get; set; }
 
+    // Indlæser kommentarer og post-data ved initialisering
     protected override async Task OnInitializedAsync()
     {
-        await LoadComments(); // Hent kommentarer ved initialisering
+        await LoadComments();
     }
 
+    // Indlæser post-data og kommentarer
     private async Task LoadComments()
     {
-        Post = await apiService.GetPost(PostId); // Opdater posten og dens kommentarer
-        StateHasChanged(); // Opdater UI'en
+        Post = await apiService.GetPost(PostId);
+        StateHasChanged();
     }
 
+    // Håndterer opstemning af post
     private async Task UpvotePost(int postId)
     {
-        await apiService.UpvotePost(postId); // Upvote indlæg
-        await RefreshPost(); // Opdater posten
+        await apiService.UpvotePost(postId);
+        await RefreshPost();
     }
 
+    // Håndterer nedstemning af post
     private async Task DownvotePost(int postId)
     {
-        await apiService.DownvotePost(postId); // Downvote indlæg
-        await RefreshPost(); // Opdater posten
+        await apiService.DownvotePost(postId);
+        await RefreshPost();
     }
 
+    // Håndterer opstemning af kommentar
     private async Task UpvoteComment(int commentId)
     {
-        await apiService.UpvoteComment(commentId); // Upvote kommentar
-        await RefreshPost(); // Opdater posten
+        await apiService.UpvoteComment(commentId);
+        await RefreshPost();
     }
 
+    // Håndterer nedstemning af kommentar
     private async Task DownvoteComment(int commentId)
     {
-        await apiService.DownvoteComment(commentId); // Downvote kommentar
-        await RefreshPost(); // Opdater posten
+        await apiService.DownvoteComment(commentId);
+        await RefreshPost();
     }
 
+    // Opdaterer post-data efter ændringer
     private async Task RefreshPost()
     {
-        await LoadComments(); // Opdater posten og kommentarerne
+        await LoadComments();
     }
 
+    // Navigerer tilbage til alle posts
     private void NavigateToAllPosts()
     {
-        NavigationManager.NavigateTo("/"); // Naviger tilbage til hovedsiden
+        NavigationManager.NavigateTo("/");
     }
 
+    // Formaterer tid siden oprettelse af post/comment
     private string FormatTimeSince(DateTime createdAt)
     {
         var timeSpan = DateTime.Now - createdAt;
@@ -119,7 +129,7 @@ else
         }
         else
         {
-            return $"{(int)timeSpan.TotalMinutes} minutes ago"; // Hvis det er mindre end en time
+            return $"{(int)timeSpan.TotalMinutes} minutes ago";
         }
     }
 }

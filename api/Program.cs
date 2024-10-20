@@ -35,9 +35,9 @@ var app = builder.Build();
 app.UseCors("AllowAll");
 
 // Brug API routing og endpoints
-app.MapControllers(); // Dette aktiverer dine API routes
+app.MapControllers(); 
 
 app.MapGet("/", () => "Welcome to the Reddit Clone API!");
 
-// Start applikationen
+
 app.Run();

@@ -7,7 +7,7 @@ namespace shared.Model
         public string Content { get; set; }
         public int Upvotes { get; set; }
         public int Downvotes { get; set; }
-        public string User { get; set; } // Ændret fra User til string for brugernavn
+        public string User { get; set; } 
         public DateTime CreatedAt { get; set; } 
         public List<Comment> Comments { get; set; } = new List<Comment>();
 
@@ -17,7 +17,7 @@ namespace shared.Model
             Content = content;
             Upvotes = upvotes;
             Downvotes = downvotes;
-            User = user; // Tildel user string
+            User = user; 
             CreatedAt = DateTime.Now;
         }
 
@@ -28,7 +28,7 @@ namespace shared.Model
             Content = "";
             Upvotes = 0;
             Downvotes = 0;
-            User = ""; // Initialiser user string
+            User = "";
             CreatedAt = DateTime.Now;
         }
 
